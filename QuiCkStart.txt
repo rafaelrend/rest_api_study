@@ -1,0 +1,21 @@
+https://www.django-rest-framework.org/tutorial/quickstart/
+https://stackoverflow.com/questions/20473572/django-rest-framework-file-upload
+
+F:
+cd F:\Unidade G\Sistemas\Python Projects\first
+
+para iniciar
+
+env/scripts/ activate
+
+python manage.py runserver
+
+#sincroniza o banco de dados.
+python manage.py --run-syncdb  
+
+
+python manage.py makemigrations quickstart
+python manage.py migrate  (pra migrar as tabelas).
+python manage.py migrate --fake quickstart (é o que realmente funcionou).
+
+python manage.py sqlall (nome da aplicação se não tiver já no contexto) - vai visualizar o sql gerado.

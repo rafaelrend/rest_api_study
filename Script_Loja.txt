@@ -1,0 +1,112 @@
+
+alter table pedidos add valor_frete_pedido_web DECIMAL(11,2) null;
+
+alter table pedidos add id_pedido_origem_web int;
+
+create index ix_pedido_origem_web on pedidos (id_pedido_origem_web );
+
+
+ALTER TABLE `pagseguro_dados_transacao_cliente`
+	CHANGE COLUMN `uf` `uf` VARCHAR(50) NULL DEFAULT NULL AFTER `cep`;
+
+-- --------------------------
+
+
+CREATE TABLE `pedido_web_tmp_item` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Id',
+	`id_pedido_web` BIGINT(20) NULL DEFAULT NULL,
+	`tipo` VARCHAR(10) NULL DEFAULT NULL,
+	`valor_texto` TEXT NULL,
+	`valor` DECIMAL(18,2) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `ix_id_pedido_web` (`id_pedido_web`)
+)
+COMMENT='Pedido Web Itens'
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+
+
+CREATE TABLE `pagseguro_autenticacao` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `pagseguro_dados_transacao_cliente` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_transacao` int(11) DEFAULT NULL,
+  `nome` varchar(80) COLLATE latin1_general_ci DEFAULT NULL,
+  `sobrenome` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `endereco` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `bairro` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `numero` varchar(10) COLLATE latin1_general_ci DEFAULT NULL,
+  `complemento` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `cidade` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `cep` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `uf` int(2) DEFAULT NULL,
+  `cpf_cnpj` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `nascimento` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `telefone` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `qtd_parcelas` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `valor_parcelas` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `valor_subtotal_parcelas` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `valor_frete` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `tipo_pagamento` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `total_produtos` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `total_pagseguro` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+
+
+CREATE TABLE `pagseguro_notificacao_errorlog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `getinfo` text COLLATE latin1_general_ci,
+  `errno` text COLLATE latin1_general_ci,
+  `error` text COLLATE latin1_general_ci,
+  `id_retorno` int(11) DEFAULT NULL,
+  `data` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=332 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+
+
+CREATE TABLE `pagseguro_retorno` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `notificationType` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `notificationCode` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+  `data` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=381 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+
+
+CREATE TABLE `pagseguro_status` (
+  `id` int(11) NOT NULL,
+  `descricao` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+
+
+CREATE TABLE `pagseguro_urls` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tipo` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `pagseguro_xml_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_transacao` int(11) NOT NULL,
+  `xml` text COLLATE latin1_general_ci NOT NULL,
+  `data` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;

@@ -1,0 +1,395 @@
+
+<html>
+<script src="https://unpkg.com/vue@2.6.6/dist/vue.min.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-1.12.3.min.js" type="text/javascript"></script>
+<script src="obj_api.js?h=7779ggew" type="text/javascript"></script>
+<body>
+<div id="app">
+<h1>Teste de API </h1>
+<div v-html="msg_retorno">
+</div>
+
+
+
+Login: <input type="text" v-model="login" style="width: 190px"/>
+Senha: <input type="text" v-model="senha" style="width: 190px"/>
+<button type="button" v-on:click="teste_login" >Testar Login.</button>
+
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="teste_endereco" >Testar Exibição de endereço do usuário</button>
+
+
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="teste_comprovantes" >Testar se tem o usuário tem foto</button>
+
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="teste_menu()" >Testar Menu</button>
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="get_note()" >Get Notificações</button>
+ 
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="create_note()" >Criar Notificação</button>
+ ou 
+ 
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="create_parcel()" >Criar Parcela</button>
+
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="get_parcel()" >Obter Parcelas</button>
+ 
+ 
+ <br><br>
+ 
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="get_emprestimo()" >Obter empréstimos do usuário</button>
+ 
+ 
+ <br><br>
+ <input type="text" v-model="endpoint" placeholder="Método GET para buscar" style="width: 450px" >
+
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="get_metodo()" >Obter método</button>
+ 
+ 
+<button type="button"
+ v-if="token.length > 1" 
+ v-on:click="alter_cpf()" >Alterar CPF</button>
+ 
+ 
+  <br><br>
+ Data:
+ <textarea id="txt_data" v-model="txdata"  style="width: 600px; height: 200px" ></textarea>
+ <select v-model="method" >
+      <option value="POST">POST</option>
+      <option value="PUT">PUT</option>
+      <option value="GET">GET</option>
+      <option value="DELETE">DELETE</option>
+ 
+ </select>
+ 
+ <button type="button"
+ v-if="token.length > 1" 
+ v-on:click="post_metodo()" >Post método</button>
+ 
+ 
+ 
+ 
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div id="div_error_api" >
+
+
+
+</div>
+
+</body>
+<script>
+window.URL_API = "https://api.voceazul.com.br/api/v1/";
+
+      var app = new Vue({
+        el:"#app",
+        data:{
+
+          login: "rafaelrend@gmail.com", //"dev1@callbee.com.br",
+          senha: "teste",
+          msg_retorno: "",
+          msg_endereco: "",
+		  endpoint: "",
+		  txdata: "",
+		  method: "POST",
+          
+          csfrtoken: "",
+          token: "" //
+        },
+        computed: {
+             
+        },
+        methods:{
+          teste_login: function(){
+            this.msg_retorno = "Tentando Login";
+            var self = this;
+            var fn_retorno = function(res){
+                         self.token = res.token;
+                         self.csfrtoken = res.csfrtoken;
+
+                         window.USER_TOKEN = res.token;
+                         window.USER_CSRFTOKEN = res.csfrtoken;
+
+            };
+            obj_api.call_login(self, {email: this.login, password: this.senha},fn_retorno)
+            
+          },
+          teste_endereco: function (){
+
+             var self = this;
+             var fn_retorno = function(res){
+
+                       self.msg_retorno = "Endereços localizados: " + res.data.length;
+                       if ( res.data.length> 0 ){
+
+            								   self.msg_retorno = "Endereços localizados: " + res.data.length + " o primeiro é: " + 
+            								   res.data[0].street;
+                       }
+					   
+					       self.msg_retorno += res.message;
+                 //alert(self.msg_endereco);
+            };
+            obj_api.call("address/get/user","GET", {},fn_retorno)
+            
+
+
+          },
+
+          teste_comprovantes: function (){
+
+                   var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Arquivo encontrado: " + res.name;
+                             }
+                   
+                       self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+                  obj_api.call("files/seach/photo_profile","GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+
+          },
+		    teste_menu: function (){
+            console.log("Vou chamar o método de menu...")
+                   var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+                   
+                       self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+                  obj_api.call("menu","GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+
+          },
+		   get_note: function (){
+            console.log("Método de notificações")
+                   var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+                  obj_api.call("notifications/getlast/10","GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+
+          },
+		   create_note: function (){
+            console.log("Tentando criar notificação..")
+                   var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+				  var data = {
+				      title: "Boleto em atraso",
+						content: "Caro cliente informamos que seu boleto encontrase em atraso",
+						alert_type: "danger",
+						notification_author: 1,
+						notification_indexs_id: "7626db30-3905-11e9-bc30-25bb7d88c0c7" };
+						
+                  obj_api.call("notifications","POST", data,fn_retorno); 
+
+          },
+		  
+		   create_parcel: function (){
+		   
+		            var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+					
+		         var Odata =  {
+								loan_id: 1,
+								parcel: 4,
+								original_value: 1,
+								issued: "2019-09-25",
+								due: "2019-03-01",
+								payment: 0,
+								paid_by: "Call be"
+							}	
+                  obj_api.call("loan_payments","POST", {Odata},fn_retorno); //Esta escrito errado. deveria ser search.
+		   
+		   },
+		  get_parcel: function (){
+		   
+		            var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+					
+                  obj_api.call("loan_payments/loan_id/1","GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+		   
+		   },
+		  get_emprestimo: function (){
+		   
+		            var self = this;
+                   var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+				//loans/get/user
+                  obj_api.call("loans/get/user","GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+		   
+		   }
+		  //get_metodo endpoint
+		  , get_metodo: function (){
+		  
+		         var endpoint = this.endpoint;
+				 
+				  var self = this;
+                  var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! ";
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+				//loans/get/user
+                  obj_api.call(endpoint,"GET", {},fn_retorno); //Esta escrito errado. deveria ser search.
+		  
+		  },
+		  post_metodo: function (){
+		  
+		       var endpoint = this.endpoint;
+           var method = this.method;
+			   
+			   console.log("Chamei método " + this.method);
+				 
+				  var self = this;
+                  var fn_retorno = function(res){
+
+                             self.msg_retorno = "Método chamado com sucesso! " + endpoint;
+                             if ( res.name != null  ){
+
+                                     
+                                   self.msg_retorno = "Método chamado com sucesso! Veja console.log ";
+                             }
+							 
+							 console.log(res );
+                   
+                       //self.msg_retorno += "- " +  res.message;
+                       //alert(self.msg_endereco);
+                  };
+				//loans/get/user
+				  var data =  {};
+				  if ( this.txdata != ""){
+				  
+				      data = JSON.parse(this.txdata);
+				  }
+         console.log("Chamei a data: "); console.log( data );
+
+                  obj_api.call(endpoint, this.method , data,fn_retorno); 
+		  },
+		  alter_cpf: function(){
+		  
+		  
+		         
+                  obj_api.call("","POST", {},fn_retorno); //Esta escrito errado. deveria ser search.
+		  }
+          
+
+ 
+        },
+        mounted: function () {
+        
+        
+        }
+
+      });
+
+</script>
+</html>

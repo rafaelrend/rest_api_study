@@ -1,0 +1,30 @@
+email-ssl.com.br 
+
+
+
+pedido@chocoroots.com.br , senha: pedido@chocoroots
+
+IMAP: email-ssl.com.br (porta 993)
+
+POP: email-ssl.com.br (porta 995)
+
+SMTP: email-ssl.com.br (porta 465)
+
+
+smtp-pulse.com
+2525
+contato@chocoroots.com.br
+8tq83Ptd3J
+
+contato@chocoroots.com.br
+
+
+
+
+
+SMTP Server:	smtp-pulse.com
+Port:	2525 (SSL port: 465)
+Login:	rafaelrend@gmail.com
+Password:	HpSZJERQ8Q9f	Change password
+Your IP:	5.104.224.148
+Sender Email:	rafaelrend@gmail.com
