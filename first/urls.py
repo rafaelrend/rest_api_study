@@ -16,19 +16,24 @@ Including another URLconf
 from django.urls import include, path
 from rest_framework import routers
 from first.quickstart import views
+from first.quickstart.views import save_items
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'books', views.BookViewSet)
 router.register(r'files', views.FileUploadViewSet)
+#router.register(r'save_items', save_items)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('items/save_items/', save_items, name='save_items'),
+    #path("save_items", save_items, name="save_items")
 ]
+
 
 #from django.contrib import admin
 #from django.urls import path
