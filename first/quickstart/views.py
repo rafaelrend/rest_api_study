@@ -8,6 +8,7 @@ import os
 import base64
 import json
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 #from django.shortcuts import render
 
@@ -62,6 +63,7 @@ class FileUploadViewSet(viewsets.ModelViewSet):
 
 
 # https://www.w3schools.com/python/python_json.asp
+@csrf_exempt
 def save_items(request):
     #request.GET['username']
     #request.POST['username']
@@ -81,17 +83,25 @@ def save_items(request):
     #insert_list = []
     #update_list = []
     
+    '''
+    data = {"results": {
+        "qtde": qtde,
+        "inserted": inserted,
+        "lista": repr(lista)
+    }}
+    return JsonResponse(data)
+    '''
     for item_it in lista:
-        obj = Item
+        obj = Item()
         
-        if item.id is not None:
-            item = Class.objects.get(id= item.id )
+        if 'id' in  item_it and item_it["id"] is not None:
+            obj = Item.objects.get(id= item_it["id"] )
             updated +=1
         else:
             inserted += 1
             
-        obj.name = item_it.name
-        obj.size  = item_it.size
+        obj.name = item_it["name"]
+        obj.size  = item_it["size"]
         
         obj.save()
         
