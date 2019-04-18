@@ -16,7 +16,7 @@ Including another URLconf
 from django.urls import include, path
 from rest_framework import routers
 from first.quickstart import views
-from first.quickstart.views import save_items
+# from first.quickstart.views import save_items
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -30,7 +30,8 @@ router.register(r'files', views.FileUploadViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('items/save_items/', save_items, name='save_items'),
+    path('items/save_items/', views.ItemsView.save_items, name='save_items'),
+    path('items/cep/<str:cep>/', views.ItemsView.get_cep_description),
     #path("save_items", save_items, name="save_items")
 ]
 

@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 import os
 import base64
 import json
+import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -61,56 +62,70 @@ class FileUploadViewSet(viewsets.ModelViewSet):
                                     id_registry = self.request.data["id_registry"],
                                     table = self.request.data["table"])
 
+class ItemsView:
+    # https://www.w3schools.com/python/python_json.asp
+    @csrf_exempt
+    def save_items(request):
+        #request.GET['username']
+        #request.POST['username']
 
-# https://www.w3schools.com/python/python_json.asp
-@csrf_exempt
-def save_items(request):
-    #request.GET['username']
-    #request.POST['username']
+
+        if request.method == 'GET':
+            data2 = {"success": "false", "msg": "Chame esse metodo como POST"}
+            return JsonResponse(data2)
+
+
+        text = request.POST['json']
+        lista = json.loads(text)
+        qtde = len(lista)
+        inserted  = 0
+        updated = 0
+
+        #insert_list = []
+        #update_list = []
+
+        '''
+        data = {"results": {
+            "qtde": qtde,
+            "inserted": inserted,
+            "lista": repr(lista)
+        }}
+        return JsonResponse(data)
+        '''
+        for item_it in lista:
+            obj = Item()
+
+            if 'id' in  item_it and item_it["id"] is not None:
+                obj = Item.objects.get(id= item_it["id"] )
+                updated +=1
+            else:
+                inserted += 1
+
+            obj.name = item_it["name"]
+            obj.size  = item_it["size"]
+
+            obj.save()
+
+            #insert_many and update_many
+
+        #poll = get_object_or_404(Poll, pk=pk)
+
+        data = {"results": {
+            "updated": updated,
+            "inserted": inserted
+        }}
+        return JsonResponse(data)
     
-    
-    if request.method == 'GET':
-        data2 = {"success": "false", "msg": "Chame esse metodo como POST"}
-        return JsonResponse(data2)
+    @csrf_exempt
+    def get_cep_description (request, cep):
         
-    
-    text = request.POST['json']
-    lista = json.loads(text)
-    qtde = len(lista)
-    inserted  = 0
-    updated = 0
-    
-    #insert_list = []
-    #update_list = []
-    
-    '''
-    data = {"results": {
-        "qtde": qtde,
-        "inserted": inserted,
-        "lista": repr(lista)
-    }}
-    return JsonResponse(data)
-    '''
-    for item_it in lista:
-        obj = Item()
+        if cep is None:
+            data2 = {"success": "false", "msg": "CEP Vazio"}
+            return JsonResponse(data2)
         
-        if 'id' in  item_it and item_it["id"] is not None:
-            obj = Item.objects.get(id= item_it["id"] )
-            updated +=1
-        else:
-            inserted += 1
-            
-        obj.name = item_it["name"]
-        obj.size  = item_it["size"]
+        # http://docs.python-requests.org/en/master/
+        url = 'http://viacep.com.br/ws/'+cep+'/json/'
         
-        obj.save()
+        r = requests.get(url)
         
-        #insert_many and update_many
-    
-    #poll = get_object_or_404(Poll, pk=pk)
-    
-    data = {"results": {
-        "updated": updated,
-        "inserted": inserted
-    }}
-    return JsonResponse(data)
+        return JsonResponse( r.json() )
